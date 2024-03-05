@@ -1,32 +1,33 @@
-import pyodbc
+# IMPORTS
+import mysql.connector
 
-# Define the connection string
-server = 'VOKO\SQLEXPRESS'
-database = 'Pet Adoption System'
-driver = '{ODBC Driver 17 for SQL Server}'  # This is the ODBC driver for SQL Server
+# Establish a connection to the MySQL database
+conn = mysql.connector.connect(
+    host="localhost", #Local
+    user="root", # Check by running "select user();" inside MySQL
+    password="", # Enter your own username
+    database="PetAdoptionSystem" # Name of Database
+)
 
-# Construct the connection string
-conn_str = f'DRIVER={driver};SERVER={server};DATABASE={database};Trusted_Connection=yes'
+# Create a cursor object to execute SQL commands
+cursor = conn.cursor()
 
-# Establish a connection
-connection = pyodbc.connect(conn_str)
+# Function used inside auth_control.py --> register_user()
+def insert_user(username, email, password, address): 
 
-# Function to execute SQL queries
-def execute_query(query):
-    cursor = connection.cursor()
-    cursor.execute(query)
-    rows = cursor.fetchall()
+    #Define the SQL quer to insert a new user into the USERS table
+    sql = "INSERT INTO USERS (user_username, user_password, user_email, user_address) VALUES (%s, %s, %s, %s)"
+    
+    # Define the values to be inserted into the query
+    val = (username, password, email, address)
+
+    # Execute hte SQL query with the provided values
+    cursor.execute(sql, val)
+
+    # Commit the transaction to the database
+    conn.commit()
+
+# Close the cursor and connection when done
+def close_connection():
     cursor.close()
-    return rows
-
-# Function to execute SQL queries that modify data (INSERT, UPDATE, DELETE)
-def execute_update(query):
-    cursor = connection.cursor()
-    cursor.execute(query)
-    connection.commit()
-    cursor.close()
-
-# Function to insert user into the database
-def insert_user(username, email, password, address):
-    query = f"INSERT INTO USERS (USER_USERNAME, USER_PASSOWRD, USER_EMAIL, USER_ADDRESS) VALUES ('{username}', '{password}', '{email}', '{address}')"
-    execute_update(query)
+    conn.close()

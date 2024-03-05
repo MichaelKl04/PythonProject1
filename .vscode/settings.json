@@ -1,0 +1,19 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "xprotocol",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 100,
+            "server": "localhost",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "Local",
+            "database": "PetAdoptionSystem",
+            "username": "root",
+            "password": "vd24lovc",
+            "connectionTimeout": 30
+        }
+    ]
+}
