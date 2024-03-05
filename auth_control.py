@@ -1,6 +1,6 @@
 # IMPORTS
 from models import User
-
+from database import insert_user
 users = [] # Empty list to test Register and Login
 
 def register_user(username, email, password, address):
@@ -12,11 +12,10 @@ def register_user(username, email, password, address):
                 print("Error: Username already exists. Please choose a different username")
                 return None
         else:
-            # Create a new user
             new_user = User(username, password, email, address)
             # add the user to the list
             users.append(new_user)
-
+            insert_user(username, password, email, address)
             print("User registered successfully!\n")
             return new_user
 
