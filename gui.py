@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 
 currentFrame = None
 
@@ -138,7 +139,6 @@ class Pet_list:
     cf = Admin_menu()
     self.pet_list.destroy()
 
-
 #--------------------------------  
     
 class Add_Pet:
@@ -148,6 +148,7 @@ class Add_Pet:
     #label
     self.pet_name = tk.Label(master=self.add_pet, text="Name: ")
     self.pet_gender = tk.Label(master=self.add_pet, text="Gender: ")
+    self.pet_type = tk.Label(master=self.add_pet, text="Type: ")
     self.pet_breed = tk.Label(master=self.add_pet, text="Breed: ")
     self.pet_age = tk.Label(master=self.add_pet, text="Age: ")
     self.pet_img = tk.Label(master=self.add_pet, text="Img URL: ")
@@ -155,13 +156,21 @@ class Add_Pet:
     #label grid
     self.pet_name.grid(row = 0, column = 0, pady = 2)
     self.pet_gender.grid(row = 1, column = 0, pady = 2)
-    self.pet_breed.grid(row = 2, column = 0, pady = 2)
-    self.pet_age.grid(row = 3, column = 0, pady = 2)
-    self.pet_img.grid(row = 4, column = 0, pady = 2)
+    self.pet_type.grid(row = 2, column = 0, pady = 2)
+    self.pet_breed.grid(row = 3, column = 0, pady = 2)
+    self.pet_age.grid(row = 4, column = 0, pady = 2)
+    self.pet_img.grid(row = 5, column = 0, pady = 2)
 
     #entry input
     self.pet_name_input = tk.Entry(master=self.add_pet, width=30)
     self.pet_gender_input = tk.Entry(master=self.add_pet, width=30)
+    self.pet_type_input = ttk.Combobox(
+      master=self.add_pet,
+      state="readonly",
+      values=["Cat", "Dog"],
+      width=27                
+    )
+    self.pet_type_input.current(0)
     self.pet_breed_input = tk.Entry(master=self.add_pet, width=30)
     self.pet_age_input = tk.Entry(master=self.add_pet, width=30)
     self.pet_img_input = tk.Entry(master=self.add_pet, width=30)
@@ -169,9 +178,10 @@ class Add_Pet:
     #entry grid
     self.pet_name_input.grid(row = 0, column = 1, pady = 2)
     self.pet_gender_input.grid(row = 1, column = 1, pady = 2)
-    self.pet_breed_input.grid(row = 2, column = 1, pady = 2)
-    self.pet_age_input.grid(row = 3, column = 1, pady = 2)
-    self.pet_img_input.grid(row = 4, column = 1, pady = 2)
+    self.pet_type_input.grid(row = 2, column = 1, pady = 2)
+    self.pet_breed_input.grid(row = 3, column = 1, pady = 2)
+    self.pet_age_input.grid(row = 4, column = 1, pady = 2)
+    self.pet_img_input.grid(row = 5, column = 1, pady = 2)
 
 
     #buttons
@@ -196,13 +206,20 @@ class Add_Pet:
     #error message
     self.error_msg = tk.Label(master=self.add_pet, fg="red")
 
-    self.submit_button.grid(row = 5, column = 0, pady = 15)
-    self.return_button.grid(row = 5, column = 1, pady = 15)
-    self.error_msg.grid(row = 6, column = 0, columnspan=2, pady = 2)
+    self.submit_button.grid(row = 6, column = 0, pady = 15)
+    self.return_button.grid(row = 6, column = 1, pady = 15)
+    self.error_msg.grid(row = 7, column = 0, columnspan=2, pady = 2)
     self.add_pet.pack()
   
   def submit_form(self):
-    self.error_msg.config(text="Adding pets don't work at the moment.")
+    msg = "Adding pets don't work at the moment. For testing data:\n"
+    msg += self.pet_name_input.get() + "\n"
+    msg += self.pet_gender_input.get() + "\n"
+    msg += self.pet_breed_input.get() + "\n"
+    msg += self.pet_age_input.get() + "\n"
+    msg += self.pet_img_input.get() + "\n"
+
+    self.error_msg.config(text=msg)
 
   def return_menu(self, cf):
     cf = Admin_menu()
@@ -233,13 +250,6 @@ class Template_menu:
 
 #--------------------------------  
 
-def debug(event):
-  for child in window.winfo_children():
-    print(child)
-
-#--------------------------------  
-
-
 # MAIN
   
 #important
@@ -253,7 +263,6 @@ l  ~ヽ
 
 window = tk.Tk()
 window.geometry("800x600")
-window.bind('<F1>', debug)
 
 greeting = tk.Label(text=logo)
 greeting.pack()
