@@ -13,7 +13,8 @@ class User:
 
 class Pet:
     # Constructor to initialize everything
-    def __init__(self, name, breed, animal_type, age, temperament, gender, date_broughtTo_shelter, location, id, status):
+    def __init__(self, id, name, breed, animal_type, age, temperament, gender, date_broughtTo_shelter, location, status):
+        self.id = id
         self.name = name
         self.breed = breed
         self.animal_type = animal_type
@@ -22,7 +23,6 @@ class Pet:
         self.gender = gender
         self.date_broughtTo_shelter = date_broughtTo_shelter
         self.location = location
-        self.id = id
         self.status = status
 
 class AdoptionApplication:
