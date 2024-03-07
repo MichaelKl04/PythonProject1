@@ -142,7 +142,7 @@ class Pet_list:
 #--------------------------------  
     
 class Add_Pet:
-  def __init__(self):
+  def __init__(self, name = None, gender = None, breed = None, age = None, img_url = None):
     self.add_pet = tk.Frame()
 
     #label
@@ -175,6 +175,22 @@ class Add_Pet:
     self.pet_age_input = tk.Entry(master=self.add_pet, width=30)
     self.pet_img_input = tk.Entry(master=self.add_pet, width=30)
 
+    #check for parameters
+    if name:
+      self.pet_name_input.insert(0, name)
+
+    if gender:
+      self.pet_gender_input.insert(0, gender)
+
+    if breed:
+      self.pet_breed_input.insert(0, breed)
+
+    if age:
+      self.pet_age_input.insert(0, age)
+
+    if img_url:
+      self.pet_img_input.insert(0, img_url)
+  
     #entry grid
     self.pet_name_input.grid(row = 0, column = 1, pady = 2)
     self.pet_gender_input.grid(row = 1, column = 1, pady = 2)
@@ -182,6 +198,7 @@ class Add_Pet:
     self.pet_breed_input.grid(row = 3, column = 1, pady = 2)
     self.pet_age_input.grid(row = 4, column = 1, pady = 2)
     self.pet_img_input.grid(row = 5, column = 1, pady = 2)
+    
 
 
     #buttons
@@ -212,19 +229,109 @@ class Add_Pet:
     self.add_pet.pack()
   
   def submit_form(self):
-    msg = "Adding pets don't work at the moment. For testing data:\n"
-    msg += self.pet_name_input.get() + "\n"
-    msg += self.pet_gender_input.get() + "\n"
-    msg += self.pet_breed_input.get() + "\n"
-    msg += self.pet_age_input.get() + "\n"
-    msg += self.pet_img_input.get() + "\n"
-
-    self.error_msg.config(text=msg)
+    cf = Add_Remove_Form(
+      "Add", 
+      self.pet_name_input.get(),
+      self.pet_gender_input.get(),
+      self.pet_type_input.get(),
+      self.pet_breed_input.get(),
+      self.pet_age_input.get(),
+      self.pet_img_input.get()
+    )
+    self.add_pet.destroy()
 
   def return_menu(self, cf):
     cf = Admin_menu()
     self.add_pet.destroy()
   
+
+#--------------------------------  
+
+class Add_Remove_Form:
+  def __init__(self, mode, name, gender, pet_type, breed, age, img_url):
+
+    #text variables
+    
+    self.name = name
+    self.gender = gender
+    self.type = pet_type
+    self.breed = breed
+    self.age = age
+    self.img = img_url
+
+    #frames
+
+    self.add_remove_frame = tk.Frame(window)
+
+    self.comfirm_label = tk.Label(master=self.add_remove_frame, text="Are you sure you want to add this pet?")
+    self.comfirm_label.grid(row=0, column=0, columnspan=2, pady=5)
+
+    # labels
+    self.name_label = tk.Label(master=self.add_remove_frame, text="Name: ")
+    self.gender_label = tk.Label(master=self.add_remove_frame, text="Gender: ")
+    self.type_label = tk.Label(master=self.add_remove_frame, text="Type: ")
+    self.breed_label = tk.Label(master=self.add_remove_frame, text="Breed: ")
+    self.age_label = tk.Label(master=self.add_remove_frame, text="Age: ")
+    self.img_label = tk.Label(master=self.add_remove_frame, text="Img URL: ")
+
+    self.name_value = tk.Label(master=self.add_remove_frame, text=name)
+    self.gender_value = tk.Label(master=self.add_remove_frame, text=gender)
+    self.type_value = tk.Label(master=self.add_remove_frame, text=pet_type)
+    self.breed_value = tk.Label(master=self.add_remove_frame, text=breed)
+    self.age_value = tk.Label(master=self.add_remove_frame, text=age)
+    self.img_value = tk.Label(master=self.add_remove_frame, text=img_url)   
+
+    #button
+
+    self.submit_button = tk.Button(
+      master=self.add_remove_frame,
+      text="Add",
+      width=25,
+      bg="green",
+      fg="yellow",
+      command= lambda: self.add()
+    )
+
+    self.return_button = tk.Button(
+      master=self.add_remove_frame,
+      text="Cancel",
+      width=25,
+      bg="green",
+      fg="yellow",
+      command= lambda: self.return_form(currentFrame)
+    )
+
+    #grid 
+
+    self.name_label.grid(row=1, column=0, pady=5)
+    self.gender_label.grid(row=2, column=0, pady=5)
+    self.type_label.grid(row=3, column=0, pady=5)
+    self.breed_label.grid(row=4, column=0, pady=5)
+    self.age_label.grid(row=5, column=0, pady=5)
+    self.img_label.grid(row=6, column=0, pady=5)
+
+    self.name_value.grid(row=1, column=1, pady=5)
+    self.gender_value.grid(row=2, column=1, pady=5)
+    self.type_value.grid(row=3, column=1, pady=5)
+    self.breed_value.grid(row=4, column=1, pady=5)
+    self.age_value.grid(row=5, column=1, pady=5)
+    self.img_value.grid(row=6, column=1, pady=5)
+    
+    self.submit_button.grid(row=7, column=0, pady=5)
+    self.return_button.grid(row=7, column=1, pady=5)
+
+    self.add_remove_frame.pack()
+  
+  def return_form(self, cf):
+    self.add_remove_frame.destroy()
+    cf = Add_Pet(
+      self.name,
+      self.gender,
+      self.breed,
+      self.age,
+      self.img
+    )
+
 
 #--------------------------------  
     #self made
