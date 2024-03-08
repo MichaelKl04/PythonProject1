@@ -1,17 +1,17 @@
 import tkinter as tk
 from tkinter import ttk
 
-currentFrame = None
-
 class Login:
   def __init__(self):
     self.frame = tk.Frame()
 
-    self.userLabel = tk.Label(master=self.frame, text="User Name")
+    self.userLabel = tk.Label(master=self.frame, text="User Name").pack()
     self.user = tk.Entry(master=self.frame, fg="white", bg="gray", width=30)
+    self.user.pack()
 
-    self.pwdLabel = tk.Label(master=self.frame, text="Password")
+    self.pwdLabel = tk.Label(master=self.frame, text="Password").pack()
     self.pwd = tk.Entry(master=self.frame, show="*",fg="white", bg="gray", width=30)
+    self.pwd.pack()
 
     self.loginButton = tk.Button(
 	  	master=self.frame,
@@ -19,29 +19,19 @@ class Login:
 	  	width=25,
 	  	bg="green",
 	  	fg="yellow",
-	  	command= lambda: self.log_in(currentFrame),
-	  )
+	  	command= lambda: self.log_in(),
+	  ).pack(pady=15)
 
-    self.err_msg = tk.Label(master=self.frame, fg="red")
-
-    self.userLabel.pack()
-    self.user.pack()
-    self.pwdLabel.pack()
-    self.pwd.pack()
-    self.loginButton.pack(pady=15)
-    self.err_msg.pack()
+    self.err_msg = tk.Label(master=self.frame, fg="red").pack()
 
     self.frame.pack()
 
-  def destroy_self(self):
-    self.frame.destroy()
-
-  def log_in(self, cf):
+  def log_in(self):
     if(self.user.get() != 'admin' or self.pwd.get() != 'adopt'):
       self.err_msg.config(text="Invalid user or password.")
     else:
-      cf = Admin_menu()
-      self.destroy_self()
+      Admin_menu()
+      self.frame.destroy()
 
 #--------------------------------  
       
@@ -55,8 +45,8 @@ class Admin_menu:
       width=25,
       bg="green",
       fg="yellow",
-      command= lambda: self.display_pet_list(currentFrame)
-    )
+      command= lambda: self.display_pet_list()
+    ).pack()
 
     self.add_pet = tk.Button(
       master=self.admin_menu,
@@ -65,8 +55,8 @@ class Admin_menu:
       bg="green",
       fg="yellow",
       
-      command= lambda: self.display_add_pet(currentFrame)
-    )
+      command= lambda: self.display_add_pet()
+    ).pack()
 
     self.remove_pet = tk.Button(
       master=self.admin_menu,
@@ -74,7 +64,7 @@ class Admin_menu:
       width=25,
       bg="red",
       fg="yellow",
-    )
+    ).pack()
 
     self.view_adoptions = tk.Button(
       master=self.admin_menu,
@@ -82,7 +72,7 @@ class Admin_menu:
       width=25,
       bg="red",
       fg="yellow",
-    )
+    ).pack()
 
     self.logout = tk.Button(
       master=self.admin_menu,
@@ -90,29 +80,24 @@ class Admin_menu:
       width=25,
       bg="green",
       fg="yellow",
-      command= lambda: self.log_admin_out(currentFrame)
+      command= lambda: self.log_admin_out()
     )
-
-    self.animal_list.pack()
-    self.add_pet.pack()
-    self.remove_pet.pack()
-    self.view_adoptions.pack()
     self.logout.pack()
 
     self.admin_menu.pack()
 
   # functions for each menu
   
-  def display_pet_list(self, cf):
-    cf = Pet_list()
+  def display_pet_list(self):
+    Pet_list()
     self.admin_menu.destroy()
 
-  def display_add_pet(self, cf):
+  def display_add_pet(self):
+    Add_Pet()
     self.admin_menu.destroy()
-    cf = Add_Pet()
-
-  def log_admin_out(self, cf):
-    cf = Login()
+    
+  def log_admin_out(self):
+    Login()
     self.admin_menu.destroy()
 
 #--------------------------------  
@@ -127,7 +112,7 @@ class Pet_list:
       width=25,
       bg="green",
       fg="yellow",
-      command= lambda: self.return_menu(currentFrame)
+      command= lambda: self.return_menu()
     )
 
     self.to_do.pack()
@@ -135,70 +120,42 @@ class Pet_list:
 
     self.pet_list.pack()
 
-  def return_menu(self, cf):
-    cf = Admin_menu()
+  def return_menu(self):
+    Admin_menu()
     self.pet_list.destroy()
 
 #--------------------------------  
     
 class Add_Pet:
-  def __init__(self, name = None, gender = None, breed = None, age = None, img_url = None):
+  def __init__(self, data = None):
     self.add_pet = tk.Frame()
 
-    #label
-    self.pet_name = tk.Label(master=self.add_pet, text="Name: ")
-    self.pet_gender = tk.Label(master=self.add_pet, text="Gender: ")
-    self.pet_type = tk.Label(master=self.add_pet, text="Type: ")
-    self.pet_breed = tk.Label(master=self.add_pet, text="Breed: ")
-    self.pet_age = tk.Label(master=self.add_pet, text="Age: ")
-    self.pet_img = tk.Label(master=self.add_pet, text="Img URL: ")
-
-    #label grid
-    self.pet_name.grid(row = 0, column = 0, pady = 2)
-    self.pet_gender.grid(row = 1, column = 0, pady = 2)
-    self.pet_type.grid(row = 2, column = 0, pady = 2)
-    self.pet_breed.grid(row = 3, column = 0, pady = 2)
-    self.pet_age.grid(row = 4, column = 0, pady = 2)
-    self.pet_img.grid(row = 5, column = 0, pady = 2)
-
-    #entry input
-    self.pet_name_input = tk.Entry(master=self.add_pet, width=30)
-    self.pet_gender_input = tk.Entry(master=self.add_pet, width=30)
-    self.pet_type_input = ttk.Combobox(
-      master=self.add_pet,
-      state="readonly",
-      values=["Cat", "Dog"],
-      width=27                
-    )
-    self.pet_type_input.current(0)
-    self.pet_breed_input = tk.Entry(master=self.add_pet, width=30)
-    self.pet_age_input = tk.Entry(master=self.add_pet, width=30)
-    self.pet_img_input = tk.Entry(master=self.add_pet, width=30)
-
-    #check for parameters
-    if name:
-      self.pet_name_input.insert(0, name)
-
-    if gender:
-      self.pet_gender_input.insert(0, gender)
-
-    if breed:
-      self.pet_breed_input.insert(0, breed)
-
-    if age:
-      self.pet_age_input.insert(0, age)
-
-    if img_url:
-      self.pet_img_input.insert(0, img_url)
-  
-    #entry grid
-    self.pet_name_input.grid(row = 0, column = 1, pady = 2)
-    self.pet_gender_input.grid(row = 1, column = 1, pady = 2)
-    self.pet_type_input.grid(row = 2, column = 1, pady = 2)
-    self.pet_breed_input.grid(row = 3, column = 1, pady = 2)
-    self.pet_age_input.grid(row = 4, column = 1, pady = 2)
-    self.pet_img_input.grid(row = 5, column = 1, pady = 2)
+    names = ["Name: ", "Gender: ", "Type: ", "Breed: ", "Age: ", "Img URL: "]
+    self.entries = []
+    self.entries_labels = []
     
+    for n in names:
+      self.entries_labels.append(tk.Label(master=self.add_pet, text=n))
+      if(n != "Type: "):
+        self.entries.append(tk.Entry(master=self.add_pet, width=30))
+      else:
+        self.entries.append(ttk.Combobox(master=self.add_pet, state="readonly", values=["Cat", "Dog"], width=27))
+        self.entries[2].current(0)
+    
+    for i in range(0, len(self.entries)):
+      self.entries[i].grid(row = i, column = 1, pady = 2)
+      
+    for i in range(0, len(self.entries_labels)):
+      self.entries_labels[i].grid(row = i, column = 0, pady = 2)
+        
+      
+    if(data):
+      for i in range(0, 6):
+        if i != 2:
+          self.entries[i].insert(0, data[i])
+        else:
+          self.entries[2].current(0 if data[2] == "Cat" else 1)
+          
 
 
     #buttons
@@ -217,7 +174,7 @@ class Add_Pet:
       width=25,
       bg="green",
       fg="yellow",
-      command= lambda: self.return_menu(currentFrame)
+      command= lambda: self.return_menu()
     )
 
     #error message
@@ -229,59 +186,45 @@ class Add_Pet:
     self.add_pet.pack()
   
   def submit_form(self):
-    cf = Add_Remove_Form(
-      "Add", 
-      self.pet_name_input.get(),
-      self.pet_gender_input.get(),
-      self.pet_type_input.get(),
-      self.pet_breed_input.get(),
-      self.pet_age_input.get(),
-      self.pet_img_input.get()
-    )
+    post = []
+    for e in self.entries:
+      post.append(e.get())
+      
+    Add_Form(post)
     self.add_pet.destroy()
 
-  def return_menu(self, cf):
-    cf = Admin_menu()
+  def return_menu(self):
+    Admin_menu()
     self.add_pet.destroy()
   
-
 #--------------------------------  
 
-class Add_Remove_Form:
-  def __init__(self, mode, name, gender, pet_type, breed, age, img_url):
-
-    #text variables
+class Add_Form:
+  def __init__(self, data):
     
-    self.name = name
-    self.gender = gender
-    self.type = pet_type
-    self.breed = breed
-    self.age = age
-    self.img = img_url
-
-    #frames
-
     self.add_remove_frame = tk.Frame(window)
+    self.data = data
+    self.data_labels = []
+    self.data_values = []
+    
+    self.comfirm_label = tk.Label(master=self.add_remove_frame, text="Are you sure you want to add this pet?").grid(row=0, column=0, columnspan=2, pady=5)
 
-    self.comfirm_label = tk.Label(master=self.add_remove_frame, text="Are you sure you want to add this pet?")
-    self.comfirm_label.grid(row=0, column=0, columnspan=2, pady=5)
 
-    # labels
-    self.name_label = tk.Label(master=self.add_remove_frame, text="Name: ")
-    self.gender_label = tk.Label(master=self.add_remove_frame, text="Gender: ")
-    self.type_label = tk.Label(master=self.add_remove_frame, text="Type: ")
-    self.breed_label = tk.Label(master=self.add_remove_frame, text="Breed: ")
-    self.age_label = tk.Label(master=self.add_remove_frame, text="Age: ")
-    self.img_label = tk.Label(master=self.add_remove_frame, text="Img URL: ")
-
-    self.name_value = tk.Label(master=self.add_remove_frame, text=name)
-    self.gender_value = tk.Label(master=self.add_remove_frame, text=gender)
-    self.type_value = tk.Label(master=self.add_remove_frame, text=pet_type)
-    self.breed_value = tk.Label(master=self.add_remove_frame, text=breed)
-    self.age_value = tk.Label(master=self.add_remove_frame, text=age)
-    self.img_value = tk.Label(master=self.add_remove_frame, text=img_url)   
-
-    #button
+    names = ["Name: ", "Gender: ", "Type: ", "Breed: ", "Age: ", "Img URL: "]
+    
+    #setting labels
+    for n in names:
+      self.data_labels.append(tk.Label(master=self.add_remove_frame, text=n))
+    
+    for d in self.data:
+      self.data_values.append(tk.Label(master=self.add_remove_frame, text=d))
+      
+    #set grid
+    for i in range(0, 6):
+      self.data_labels[i].grid(row=(i+1), column=0, pady=5)
+      self.data_values[i].grid(row=(i+1), column=1, pady=5)
+      
+    #button creation
 
     self.submit_button = tk.Button(
       master=self.add_remove_frame,
@@ -289,8 +232,7 @@ class Add_Remove_Form:
       width=25,
       bg="green",
       fg="yellow",
-      command= lambda: self.add()
-    )
+    ).grid(row=7, column=0, pady=5)
 
     self.return_button = tk.Button(
       master=self.add_remove_frame,
@@ -298,39 +240,15 @@ class Add_Remove_Form:
       width=25,
       bg="green",
       fg="yellow",
-      command= lambda: self.return_form(currentFrame)
-    )
-
-    #grid 
-
-    self.name_label.grid(row=1, column=0, pady=5)
-    self.gender_label.grid(row=2, column=0, pady=5)
-    self.type_label.grid(row=3, column=0, pady=5)
-    self.breed_label.grid(row=4, column=0, pady=5)
-    self.age_label.grid(row=5, column=0, pady=5)
-    self.img_label.grid(row=6, column=0, pady=5)
-
-    self.name_value.grid(row=1, column=1, pady=5)
-    self.gender_value.grid(row=2, column=1, pady=5)
-    self.type_value.grid(row=3, column=1, pady=5)
-    self.breed_value.grid(row=4, column=1, pady=5)
-    self.age_value.grid(row=5, column=1, pady=5)
-    self.img_value.grid(row=6, column=1, pady=5)
+      command= lambda: self.return_form()
+    ).grid(row=7, column=1, pady=5)
     
-    self.submit_button.grid(row=7, column=0, pady=5)
-    self.return_button.grid(row=7, column=1, pady=5)
-
+    #show the thing
     self.add_remove_frame.pack()
   
-  def return_form(self, cf):
+  def return_form(self):
     self.add_remove_frame.destroy()
-    cf = Add_Pet(
-      self.name,
-      self.gender,
-      self.breed,
-      self.age,
-      self.img
-    )
+    Add_Pet(self.data)
 
 
 #--------------------------------  
@@ -339,20 +257,9 @@ class Add_Remove_Form:
 class Template_menu:
   def __init__(self):
     self.frame = tk.Frame(window)
-
-    #create widgets
-
-    #self.widget.pack()
-
-    #frame.pack()
-
   
-  def return_func(self, cf):
-    #example to return back to the previous menu/page
-    cf = Login()
-    self.destroy_self()
-    
-  def destroy_self(self):
+  def return_func(self):
+    Login()
     self.frame.destroy()
 
 #--------------------------------  
@@ -374,5 +281,5 @@ window.geometry("800x600")
 greeting = tk.Label(text=logo)
 greeting.pack()
 
-currentFrame = Login()
+Login()
 window.mainloop()
