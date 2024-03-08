@@ -13,8 +13,8 @@ conn = mysql.connector.connect(
 # Create a cursor object to execute SQL commands
 cursor = conn.cursor()
 
-# Function used inside auth_control.py --> register_user()
-def insert_user(username, email, password, address): 
+
+def insert_user(username, password, email, address): 
 
     # SQL query to insert a new user into the USERS table
     sql = "INSERT INTO USERS (user_username, user_password, user_email, user_address) VALUES (%s, %s, %s, %s)"
@@ -28,7 +28,24 @@ def insert_user(username, email, password, address):
     # Commit the transaction to the database
     conn.commit()
 
-# Function used inside auth_control.py --> register_user()
+
+
+def insert_pet(Pname, Pbreed ,Panimal_type, Page, Ptemperament, Pgender, Pdate_broughtTo_Shelter, Plocation, Pstatus, Pimg):
+    # SQL query to insert a new pet into the PETS table
+    sql = "INSERT INTO PETS (pet_name, pet_breed, pet_type, pet_age, pet_temperament, pet_gender, pet_date_broughtTo_shelter, pet_location, pet_status, pet_img) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+
+    # Define the values to be inserted into the query
+    pet = (Pname, Pbreed, Panimal_type, Page, Ptemperament, Pgender, Pdate_broughtTo_Shelter, Plocation, Pstatus, Pimg)
+
+    # Execute the SQL query with the provided values
+    cursor.execute(sql, pet)
+
+    # Commit the transaction to the database
+    conn.commit()
+
+    
+
+
 def username_already_exists(username):
     # SQL query to check if the username exists
     sql = "SELECT * FROM USERS WHERE user_username = %s"
@@ -38,6 +55,8 @@ def username_already_exists(username):
     result = cursor.fetchone()
     # Return True if the result is not None, indicating the username exists
     return result is not None
+
+
 
 def user_pass_exists(username, password):
     # SQL query to check if the username and password match
@@ -53,18 +72,29 @@ def user_pass_exists(username, password):
     else:
         print("Error: Invalid username or password")
         return None
-    
+
+
+
 def import_pets():
+    # SQL query to select all from pets
     sql = "SELECT * FROM PETS"
+    # Execute the SQL query to retrieve all pet records
     cursor.execute(sql)
+    # Fetch all the pet records from the database
     pet_records = cursor.fetchall()
 
+    # Initialize an empty list to store pet objects
     pets = []
 
+    # Iterate over each pet record retrieved from teh database
     for record in pet_records:
+        # Create a Pet Object from the record and append it to the pets list
         pet = Pet(record[0], record[1], record[2], record[3], record[4], record[5], record[6], record[7], record[8], record[9])
         pets.append(pet)
+    # Return the list of pet objects
     return pets
+
+
 
 # Close the cursor and connection when done
 def close_connection():
