@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from database import insert_user, username_already_exists, user_pass_exists, import_pets, insert_pet
+from database import insert_user, username_already_exists, user_pass_exists, import_pets, insert_pet, export_app_records
 
 currentFrame = None
 exisiting_users = {} # Keep track of exisiting users
@@ -50,7 +50,8 @@ class Menu:
 
   #def window_quit(self):
     
-    
+    #--------------------------------  
+
 class Register:
   def __init__(self):
     self.frame = tk.Frame()
@@ -177,14 +178,13 @@ class Login:
     if user:
           self.err_msg.config(text="") # Clear error message
           self.scs_msg.config(text=f"Welcome {user[1]}!")
-          self.frame.after(2000, self.login_complete)
+          self.frame.after(1000, self.login_complete)
     else:
       self.err_msg.config(text="Error: Invalid username or password.")
 
   def login_complete(self):
     logged_in = Admin_menu()
     self.destroy_self()
-
 
 #--------------------------------  
       
@@ -258,33 +258,111 @@ class Admin_menu:
     cf = Login()
     self.admin_menu.destroy()
 
-
 #--------------------------------  
     
 class Pet_list:
-  def __init__(self):
-    self.pet_list = tk.Frame(window)
-    self.to_do = tk.Label(master=self.pet_list, text="This is the part where you attempt to look for pets in the SQL database")
-    self.return_button = tk.Button(
-      master=self.pet_list,
-      text="Return",
-      width=25,
-      bg="green",
-      fg="yellow",
-      command= lambda: self.return_menu(currentFrame)
-    )
+    def __init__(self):
+        self.pet_list = tk.Frame()
+        self.pets = import_pets()
 
-    self.to_do.pack()
-    self.return_button.pack()
+        self.display_pets()
 
-    self.pet_list.pack()
+        self.return_button = tk.Button(
+            master=self.pet_list,
+            text="Return",
+            width=25,
+            bg="green",
+            fg="yellow",
+            command=self.return_menu
+        )
 
-  def return_menu(self, cf):
-    cf = Admin_menu()
-    self.pet_list.destroy()
+        self.return_button.pack(pady=5)
+        self.pet_list.pack(pady=5)
+
+    def display_pets(self):
+
+        for pet in self.pets:
+            pet_button = tk.Button(
+                master=self.pet_list,
+                width=60,
+                anchor="w",
+                text=f"Name: {pet.name}, Breed: {pet.breed}, Location: {pet.location}, Status: {pet.status}",
+                command=lambda p=pet: self.show_pet_details(p)
+            )
+            pet_button.pack(pady=5)
+
+    def show_pet_details(self, pet):
+      details = Show_Details(self.pet_list, pet)
+ 
+    def return_menu(self,):
+      back = Admin_menu()
+      self.pet_list.destroy()
 
 #--------------------------------  
-    
+
+class Show_Details:
+    def __init__(self, parent, pet):
+        self.pet = pet
+        self.parent = parent
+        self.detail_frame = tk.Frame(self.parent)
+
+        # labels for each attribute
+        self.pet_id_label = tk.Label(self.detail_frame, text=f"ID: {pet.id}")
+        self.pet_name_label = tk.Label(self.detail_frame, text=f"Name: {pet.name}")
+        self.pet_breed_label = tk.Label(self.detail_frame, text=f"Breed: {pet.breed}")
+        self.pet_type_label = tk.Label(self.detail_frame, text=f"Type: {pet.animal_type}")
+        self.pet_age_label = tk.Label(self.detail_frame, text=f"Age: {pet.age}")
+        self.pet_temperament_label = tk.Label(self.detail_frame, text=f"Temperament: {pet.temperament}")
+        self.pet_gender_label = tk.Label(self.detail_frame, text=f"Gender: {pet.gender}")
+        self.pet_date_broughtTo_shelter_label = tk.Label(self.detail_frame, text=f"Date Brought to Shelter: {pet.date_broughtTo_shelter}")
+        self.pet_location_label = tk.Label(self.detail_frame, text=f"Location: {pet.location}")
+        self.pet_status_label = tk.Label(self.detail_frame, text=f"Status: {pet.status}")
+        self.pet_img_label = tk.Label(self.detail_frame, text=f"Image: {pet.img_url}")
+
+        # Pack labels
+        self.pet_id_label.pack()
+        self.pet_name_label.pack()
+        self.pet_breed_label.pack()
+        self.pet_type_label.pack()
+        self.pet_age_label.pack()
+        self.pet_temperament_label.pack()
+        self.pet_gender_label.pack()
+        self.pet_date_broughtTo_shelter_label.pack()
+        self.pet_location_label.pack()
+        self.pet_status_label.pack()
+        self.pet_img_label.pack()
+        # Adopt Button
+        self.apply_button = tk.Button(
+           self.detail_frame, 
+           text="Apply for Adoption", 
+           bg="green",
+           width=25,
+           command=self.apply_for_adoption
+           )
+        self.apply_button.pack()
+        # Return button
+        self.return_button = tk.Button(
+            self.detail_frame,
+            text="Clear",
+            width=25,
+            bg="green",
+            command=self.return_to_pet_list
+        )
+        self.return_button.pack()
+
+        # Pack detail frame
+        self.detail_frame.pack()
+
+    def apply_for_adoption(self):
+            self.detail_frame.destroy()
+            app_page = Application(self.parent, self.pet)
+       
+    def return_to_pet_list(self):
+        self.detail_frame.destroy()
+
+
+#--------------------------------  
+ 
 class Add_Pet:
   def __init__(self):
     self.add_pet = tk.Frame()
@@ -377,6 +455,7 @@ class Add_Pet:
     self.submit_button.grid(row =10, column = 0, pady = 15)
     self.return_button.grid(row = 10, column = 1, pady = 15)
     self.error_msg.grid(row = 11, column = 0, columnspan=2, pady = 2)
+    self.scs_msg.grid(row = 11, column = 0, columnspan=2, pady = 2)
     self.add_pet.pack()
   
   def submit_form(self):
@@ -393,13 +472,68 @@ class Add_Pet:
     status = self.pet_status_input.get().strip()
 
     insert_pet(name, breed, pet_type, age, temperament, gender, date_brought_to_shelter, location, status, img_url)
-
     self.scs_msg.config(text="Pet details submitted successfully")
-
-  def return_menu(self, cf):
+    self.add_pet.after(2000, lambda: self.scs_msg.config(text=""))
+    
+  def return_menu(self):
     cf = Admin_menu()
     self.add_pet.destroy()
   
+#--------------------------------  
+
+class Application:
+    def __init__(self, parent, pet):
+        self.parent = parent
+        self.pet = pet
+
+        self.application_frame = tk.Frame(self.parent)
+        self.application_frame.pack()
+
+        # Add labels and entry fields for user information
+        self.name_label = tk.Label(self.application_frame, text="Name:")
+        self.name_entry = tk.Entry(self.application_frame)
+        self.name_label.grid(row=0, column=0)
+        self.name_entry.grid(row=0, column=1)
+
+        self.lname_label = tk.Label(self.application_frame, text="Last Name:")
+        self.lname_entry = tk.Entry(self.application_frame)
+        self.lname_label.grid(row=1, column=0)
+        self.lname_entry.grid(row=1, column=1)
+
+        self.adoption_date_label = tk.Label(self.application_frame, text="Adoption Date:")
+        self.adoption_date_entry = tk.Entry(self.application_frame)
+        self.adoption_date_label.grid(row=2, column=0)
+        self.adoption_date_entry.grid(row=2, column=1)
+
+        self.phone_label = tk.Label(self.application_frame, text="Phone:")
+        self.phone_entry = tk.Entry(self.application_frame)
+        self.phone_label.grid(row=3, column=0)
+        self.phone_entry.grid(row=3, column=1)
+
+        self.address_label = tk.Label(self.application_frame, text="Address:")
+        self.address_entry = tk.Entry(self.application_frame)
+        self.address_label.grid(row=4, column=0)
+        self.address_entry.grid(row=4, column=1)
+
+        # Submit button
+        self.submit_button = tk.Button(self.application_frame, text="Submit", command=self.submit_application)
+        self.submit_button.grid(row=5, columnspan=2)
+
+    def submit_application(self):
+        self.pet.status = "not-available"
+
+        application_info = {
+          adopted_pet: self.pet.id,# ----> Get the pet id from show_details
+          #adopting_user: ,  ---> Figure out how to get username of current logged in user
+          user_name: self.name_entry.get(),
+          user_lname: self.lname_entry.get(),
+          adoption_date: self.adoption_date_entry.get(),
+          user_phone: self.phone_entry.get(),
+          user_address: self.address_entry.get()
+        }
+        export_app_records(application_info)
+
+        self.parent.remove_pet(self.pet)
 
 #--------------------------------  
     #self made

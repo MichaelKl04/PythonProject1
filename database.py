@@ -89,10 +89,39 @@ def import_pets():
     # Iterate over each pet record retrieved from teh database
     for record in pet_records:
         # Create a Pet Object from the record and append it to the pets list
-        pet = Pet(record[0], record[1], record[2], record[3], record[4], record[5], record[6], record[7], record[8], record[9])
+        pet = Pet(id=record[0], 
+                  name=record[1], 
+                  breed=record[2], 
+                  animal_type=record[3], 
+                  age=record[4], 
+                  temperament=record[5], 
+                  gender=record[6], 
+                  date_broughtTo_shelter=record[7], 
+                  location=record[8],
+                  status=record[9], 
+                  pet_img=record[10])
         pets.append(pet)
     # Return the list of pet objects
     return pets
+
+def export_app_records(adopted_pet, adopting_user, user_name, user_lname, adoption_date, user_phone, user_address):
+    try:
+        # SQL query to insert application records into the APPLICATION_RECORDS table
+        sql = "INSERT INTO APPLICATION_RECORDS (adopted_pet, adopting_user, user_name, user_lname, adoption_date, user_phone, user_address) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        
+        # Define the values to be inserted into the query
+        values = (adopted_pet, adopting_user, user_name, user_lname, adoption_date, user_phone, user_address)
+        
+        # Execute the SQL query with the provided values
+        cursor.execute(sql, values)
+        
+        # Commit the transaction to the database
+        conn.commit()
+        
+        print("Application records exported successfully!")
+    except mysql.connector.Error as error:
+        print("Failed to export application records:", error)
+
 
 
 
