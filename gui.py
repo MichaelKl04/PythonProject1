@@ -31,7 +31,8 @@ class Menu:
       text="Exit",
       width=25,
       bg="green",
-      fg="yellow"
+      fg="yellow",
+      command=self.window_quit
       )
 
     self.register_button.pack(pady=5)
@@ -48,8 +49,8 @@ class Menu:
     login_page = Login()
     self.frame.destroy()
 
-  #def window_quit(self):
-    
+  def window_quit(self):
+    window.quit()
     #--------------------------------  
 
 class Register:
